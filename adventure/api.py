@@ -62,7 +62,7 @@ def move(request):
 
 
 @api_view(["GET"])
-def get_rooms(request):
+def rooms(request):
     rooms = Room.objects.all().values()
     return JsonResponse({'title': list(rooms)}, safe=True, status=400)
 
