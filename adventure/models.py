@@ -14,7 +14,7 @@ class Room(models.Model):
     s_to = models.IntegerField(default=0)
     e_to = models.IntegerField(default=0)
     w_to = models.IntegerField(default=0)
-    grid = ArrayField(ArrayField(models.IntegerField(default=0)))
+    grid = ArrayField(models.IntegerField(null=True),null=True)
     def connectRooms(self, destinationRoom, direction):
         destinationRoomID = destinationRoom.id
         try:
