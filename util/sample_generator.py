@@ -4,10 +4,11 @@
 # You can modify generate_rooms() to create your own
 # procedural generation algorithm and use print_rooms()
 # to see the world.
+from mapGenerator import createMap
 
 
 class Room:
-    def __init__(self, id, name, description, x, y):
+    def __init__(self, id, name, description, x, y, roomMap):
         self.id = id
         self.name = name
         self.description = description
@@ -17,10 +18,14 @@ class Room:
         self.w_to = None
         self.x = x
         self.y = y
+
+        self.roomMap = roomMap
+
     def __repr__(self):
         if self.e_to is not None:
             return f"({self.x}, {self.y}) -> ({self.e_to.x}, {self.e_to.y})"
         return f"({self.x}, {self.y})"
+
     def connect_rooms(self, connecting_room, direction):
         '''
         Connect two rooms in the given n/s/e/w direction
@@ -29,11 +34,14 @@ class Room:
         reverse_dir = reverse_dirs[direction]
         setattr(self, f"{direction}_to", connecting_room)
         setattr(connecting_room, f"{reverse_dir}_to", self)
+
     def get_room_in_direction(self, direction):
         '''
         Connect two rooms in the given n/s/e/w direction
         '''
         return getattr(self, f"{direction}_to")
+    def printRoom(self):
+        print(self.roomMap)
 
 
 class World:
@@ -41,6 +49,7 @@ class World:
         self.grid = None
         self.width = 0
         self.height = 0
+
     def generate_rooms(self, size_x, size_y, num_rooms):
         '''
         Fill up the grid, bottom to top, in a zig-zag pattern
@@ -50,17 +59,16 @@ class World:
         self.grid = [None] * size_y
         self.width = size_x
         self.height = size_y
-        for i in range( len(self.grid) ):
+        for i in range(len(self.grid)):
             self.grid[i] = [None] * size_x
 
         # Start from lower-left corner (0,0)
-        x = -1 # (this will become 0 on the first step)
+        x = -1  # (this will become 0 on the first step)
         y = 0
         room_count = 0
 
         # Start generating rooms to the east
         direction = 1  # 1: east, -1: west
-
 
         # While there are rooms to be created...
         previous_room = None
@@ -80,7 +88,10 @@ class World:
                 direction *= -1
 
             # Create a room in the given direction
-            room = Room(room_count, "A Generic Room", "This is a generic room.", x, y)
+            room = Room(room_count, "A Generic Room",
+                        "This is a generic room.", x, y, createMap())
+
+            room.printRoom()
             # Note that in Django, you'll need to save the room after you create it
 
             # Save the room in the World grid
@@ -94,8 +105,6 @@ class World:
             previous_room = room
             room_count += 1
 
-
-
     def print_rooms(self):
         '''
         Print the rooms in room_grid in ascii characters.
@@ -108,7 +117,7 @@ class World:
         # bottom to top.
         #
         # We reverse it so it draws in the right direction.
-        reverse_grid = list(self.grid) # make a copy of the list
+        reverse_grid = list(self.grid)  # make a copy of the list
         reverse_grid.reverse()
         for row in reverse_grid:
             # PRINT NORTH CONNECTION ROW
@@ -152,11 +161,12 @@ class World:
 
 
 w = World()
-num_rooms = 44
-width = 8
-height = 7
+num_rooms = 100
+width = 10
+height = 10
 w.generate_rooms(width, height, num_rooms)
 w.print_rooms()
 
 
-print(f"\n\nWorld\n  height: {height}\n  width: {width},\n  num_rooms: {num_rooms}\n")
+print(
+    f"\n\nWorld\n  height: {height}\n  width: {width},\n  num_rooms: {num_rooms}\n")
