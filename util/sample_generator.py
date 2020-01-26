@@ -4,10 +4,11 @@
 # You can modify generate_rooms() to create your own
 # procedural generation algorithm and use print_rooms()
 # to see the world.
+from mapGenerator import createMap
 
 
 class Room:
-    def __init__(self, id, name, description, x, y):
+    def __init__(self, id, name, description, x, y, roomMap):
         self.id = id
         self.name = name
         self.description = description
@@ -17,6 +18,8 @@ class Room:
         self.w_to = None
         self.x = x
         self.y = y
+
+        self.roomMap = roomMap
 
     def __repr__(self):
         if self.e_to is not None:
@@ -37,6 +40,8 @@ class Room:
         Connect two rooms in the given n/s/e/w direction
         '''
         return getattr(self, f"{direction}_to")
+    def printRoom(self):
+        print(self.roomMap)
 
 
 class World:
@@ -84,7 +89,9 @@ class World:
 
             # Create a room in the given direction
             room = Room(room_count, "A Generic Room",
-                        "This is a generic room.", x, y)
+                        "This is a generic room.", x, y, createMap())
+
+            room.printRoom()
             # Note that in Django, you'll need to save the room after you create it
 
             # Save the room in the World grid
@@ -154,13 +161,8 @@ class World:
 
 
 w = World()
-<<<<<<< HEAD
-num_rooms = 44
-width = 8
-=======
 num_rooms = 100
 width = 10
->>>>>>> 872ef53781c61f4344f39e955cc7123bb6094703
 height = 10
 w.generate_rooms(width, height, num_rooms)
 w.print_rooms()
